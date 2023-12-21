@@ -1,0 +1,15 @@
+title: NINA-report format
+author: Jens Åström
+version: 0.0.1
+quarto-required: ">=1.2.198"
+contributes:
+  formats:
+    common:
+      date-format: full
+    pdf:
+      documentclass: article
+      template: "partials/template.tex"
+      cite-method: citeproc
+      number-sections: true
+    html:
+      theme: styles/elsevier.scss
