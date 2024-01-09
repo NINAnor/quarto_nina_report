@@ -55,7 +55,11 @@ abstract: Tekst inn her, et kort resymé av innholdet. \textbf{Maksimalt 4000 te
 
 ---
 
-```{r setup, echo=F, message=F, warning=F}
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+#| warning: false
 require(NinaR)
 require(xtable)
 require(knitr)
@@ -70,7 +74,12 @@ options(width = 60,
 ```
 
 # Innledning {#inl}
-Dette er et eksempel på en NINA Rapport produsert fra statistikkprogrammet R, gjennom pakken `NinaR` [@NinaR]. Den kan med fordel brukes da rapporten har stort innhold av R-skript. Bortsett fra seksjonene med kod er mallen tenkt å etterligne NINA sin standardmalle for rapporter. Malen brukes på samme måte som andre maller i pakken `Rmarkdown` [@rmarkdown] og `rticles` [@rticles] (se http://rmarkdown.rstudio.com/). Rstudio er særskilt tilpasset til `rmarkdown`, men malen kan også brukes direkte i R (også via terminalen/Command Prompt). I Rstudio bruker man enklest knappen "Knit", men rapporten kan også genereres med kommandoen `rmarkdown::render("din_rapport.Rmd")`.
+Dette er en Quarto-malle for NINA Rapporter, en viderutvikling av Rmarkdown-mallen fra `NinaR` [@NinaR]. Den er fremst tenkt for å brukes i statistikkprogrammet R, for eksempel via https://rstudio.nina.no. Quarto vil etterhvert erstatte Rmarkdown i Rstudio, og har fordelen ved å fungere ikke bare for R, uten også for andre språk, for eksempel python.
+
+Skrivemåten ved å produsere en NINA-rapport fra et skript brukes med fordel da rapporten har et stort innslag av kode, eller da man ønsker å lage en reproduserbar rapport. Bortsett fra seksjonene med kod er mallen tenkt å etterligne NINA sin standardmalle for rapporter. For å samarbeide med kolleger som ikke er kjent med Git eller kod generelt, kan man for eksempel bruke `trackdown`. Med den pakken kan hovedforfatteren dele en oppdatert tekst-versjon av dokumentet på google drive, der medforfattere kan redigere teksten. Deretter kan endringene i teksten synkes ned til Quarto-dokumentet. Se mer på https://cran.r-project.org/web/packages/trackdown/vignettes/trackdown-workflow.html
+
+Bruk mallen f.eks. i rstudio.nina.no ved å skrive dette i terminalvinduet: `quarto use template NINAnor/quarto_nina_report`. For øyeblikket er ikke quarto-templater tilgjengelig via Rstudio sine menyer, men dette vil truligvis forbedres i fremtiden. 
+
 
 ## Fremgangsmåte
 
@@ -111,26 +120,63 @@ Resultater {#res}
 ========
 R-kod kan legges til på vanlig vis. Fargemønstret kan endres gjennom `highlight: xxx` Yaml-avsnittet i starten på dokumentet.
 
-```{r test-chunk1}
+```{r}
+#| label: test-chunk1
 #Slik vises kode-kommentarer
 
 x<- 1:10*0.5+rnorm(10, mean=1,sd=2)
 y<-1:10
 ```
+
+Quarto er så kalt "kodespråk-agnostisk" og andre programmeringspråk kan brukes. For eksempel Bash: 
+
+```{bash}
+for (( n=1; n<=5; n++ ))
+do
+echo "Rad $n"
+done
+```
+
+Eller Python, som dette skript for å finne primtal:
+
+```{python}
+lower = 1
+upper = 20
+
+for num in range(lower, upper + 1):
+   if num > 1:
+       for i in range(2, num):
+           if (num % i) == 0:
+               break
+       else:
+           print(num)
+
+
+```
+
+
 Tabeller fra R kan lages gjennom pakken `xtable`. Her er et eksempel på output fra en enkel modell. Man kan også referere til en tabell, for eksempel referer jeg nå til tabell \ref{tab1}.
 
-```{r test-chunk2, results = 'asis', message = F}
+```{r}
+#| label: test-chunk2
+#| results: asis
+#| message: false
+
 mod1<-glm(y~x)
 print(xtable(round(summary(mod1)$coefficients, 3), 
              caption="Tabell laget med xtable \\label{tab1}"))
 
 ```
 
-Figurer fungerer på vanlig vis. Figurtekst lages hvis `fig_caption: yes` er angitt i Yaml-avsnittet. Figurteksten legges til som i eksemplet nedenfor. Hvis man angir `\\label{}` i figurteksten kan man også referere til figuren. Figur \ref{xy_plot} viser et eksempel på bruk av NINAs logofarger via funksjonen `NinaR::NinaPalette`.  
+Figurer fungerer på vanlig vis. Figurtekst lages hvis `fig_caption: yes` er angitt i Yaml-avsnittet. Figurteksten legges til som i eksemplet nedenfor. Hvis man angir `\\label{}` i figurteksten kan man også referere til figuren. Figur \ref{fig-barplot} viser et eksempel på bruk av NINAs logofarger via funksjonen `NinaR::NinaPalette`.  
 
 
 
-```{r test-chunk3, fig.cap = "Ett exempel med NINAs fargepalett generert fra R. \\label{xy_plot}"}
+```{r}
+#| label: fig-barplot
+#| fig-cap: Ett exempel med NINAs fargepalett generert fra R.
+#| fig-pos: 'h!'
+
 plot.mat <- matrix(rnorm(25, 40, sd=10), ncol=5, dimnames = list(c("Sportsfisker", "Elveeier", "Oppleid", "Fisket", "Poseidon"), c("Lakselus", "Utsetting", " Strengere restriksjoner", "Fysiske tiltak", "Flaks")))
 
 plot.mat <- tibble::tibble(Verdi = rnorm(n = 25, 
@@ -167,12 +213,18 @@ Eksisterende bilder kan også legges til gjennom vanlig markdown syntax. Disse b
 Hvis man trenger flere muligheter for definisjon av størrelse og plassering på en ferdig bilde, kan man også inkludere den med "include_graphics".
 
 
-```{r timer, echo = F, out.width = '10cm', dev ='pdf', fig.cap = "NINA-logoen i større format \\label{logo_stor}"}
-knitr::include_graphics("logo.eps")
+```{r}
+#| label: logo_stor
+#| echo: false
+#| out-width: '10cm'
+#| out-height: '5cm'
+#| fig-cap: 'NINA-logoen via (knitr::include_graphics), i større format.'
+
+knitr::include_graphics("logo.eps",)
 ```
 
 
-Vi kan også referere til bilder, for eksempel til figur \ref{logoen}, som er inkludert i mallen. Notere at man må ha to `\\` for figurer laget i R men en `\` for  "eksterne" bilder. Man kan referere til seksjoner ved å angi en referanse i headingen `{#seksjon}`. Se dette eksempel for å referere til innledningen i kapittel \ref{inl}.
+Vi kan også referere til bilder, for eksempel til figur \ref{logoen}, som er inkludert i mallen. Notere at man må ha to `\\` for figurer laget i R men en `\` for  "eksterne" bilder. Man kan referere til seksjoner ved å angi en referanse i headingen `{#seksjon}`. For eksempel refererer jeg nå til innledningen i kapittel \ref{inl}.
 
 
 \clearpage
