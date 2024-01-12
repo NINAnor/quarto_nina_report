@@ -12,4 +12,4 @@ contributes:
       cite-method: citeproc
       number-sections: true
     html:
-      theme: styles/elsevier.scss
+      theme: styles/ninareport.scss

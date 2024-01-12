@@ -42,6 +42,19 @@ format:
     highlight: tango
     fig_caption: yes
     latex_engine: xelatex
+    default-image-extension: svg
+  # ninareport-html:
+  #   highlight-style: tango
+  #   toc: true
+  #   toc-depth: 3
+  #   toc-location: left
+  #   #default-image-extension: svg
+crossref:
+  fig-title: Figur     # (default is "Figure")
+  tbl-title: Tabell     # (default is "Table") 
+  fig-prefix: Figur   # (default is "Figure")
+  tbl-prefix: Tabell    # (default is "Table")   
+  sec-prefix: kapittel
 foreword: 
     text: [Forord inn her]
     location: [Sted, forord]
@@ -73,7 +86,7 @@ options(width = 60,
 
 ```
 
-# Innledning {#inl}
+# Innledning {#sec-inl}
 Dette er en Quarto-malle for NINA Rapporter, en viderutvikling av Rmarkdown-mallen fra `NinaR` [@NinaR]. Den er fremst tenkt for å brukes i statistikkprogrammet R, for eksempel via https://rstudio.nina.no. Quarto vil etterhvert erstatte Rmarkdown i Rstudio, og har fordelen ved å fungere ikke bare for R, uten også for andre språk, for eksempel python.
 
 Skrivemåten ved å produsere en NINA-rapport fra et skript brukes med fordel da rapporten har et stort innslag av kode, eller da man ønsker å lage en reproduserbar rapport. Bortsett fra seksjonene med kod er mallen tenkt å etterligne NINA sin standardmalle for rapporter. For å samarbeide med kolleger som ikke er kjent med Git eller kod generelt, kan man for eksempel bruke `trackdown`. Med den pakken kan hovedforfatteren dele en oppdatert tekst-versjon av dokumentet på google drive, der medforfattere kan redigere teksten. Deretter kan endringene i teksten synkes ned til Quarto-dokumentet. Se mer på https://cran.r-project.org/web/packages/trackdown/vignettes/trackdown-workflow.html
@@ -112,6 +125,14 @@ Det kan gå kjappere å skrive rapporter i dette format, men det gjenstår ofte 
 \paragraph{Prøver meg på en sub sub sub heading}
 Obs at 4-nivåseksjoner må skrives med `\paragraph{titell}`!
 
+
+## Ekvasjoner
+Ekvasjoner kan skrives met LaTeX-kod.
+
+$$\tilde f(\omega)=\frac{1}{2\pi}
+\int_{-\infty}^\infty f(x)e^{-i\omega x}\,dx\,,$$
+
+
 \newpage
 
 
@@ -124,8 +145,8 @@ R-kod kan legges til på vanlig vis. Fargemønstret kan endres gjennom `highligh
 #| label: test-chunk1
 #Slik vises kode-kommentarer
 
-x<- 1:10*0.5+rnorm(10, mean=1,sd=2)
-y<-1:10
+x <- 1:10 * 0.5 + rnorm(10, mean = 1, sd = 2)
+y <- 1:10
 ```
 
 Quarto er så kalt "kodespråk-agnostisk" og andre programmeringspråk kan brukes. For eksempel Bash: 
@@ -155,20 +176,26 @@ for num in range(lower, upper + 1):
 ```
 
 
-Tabeller fra R kan lages gjennom pakken `xtable`. Her er et eksempel på output fra en enkel modell. Man kan også referere til en tabell, for eksempel referer jeg nå til tabell \ref{tab1}.
+Tabeller fra R kan lages gjennom pakken `xtable`. Her er et eksempel på output fra en enkel modell. Man kan også referere til en tabell, for eksempel referer jeg nå til tabell @tbl-table1.
 
 ```{r}
-#| label: test-chunk2
+#| label: tbl-table1
 #| results: asis
 #| message: false
+#| tbl-cap: Eksempeltabell
+
 
 mod1<-glm(y~x)
-print(xtable(round(summary(mod1)$coefficients, 3), 
-             caption="Tabell laget med xtable \\label{tab1}"))
+ print(xtable(round(summary(mod1)$coefficients, 3), 
+              caption="Tabell laget med xtable."))
+
+#Bruk dette for html-output 
+# knitr::kable(round(summary(mod1)$coefficients, 3), 
+#              caption="Tabell laget med xtable.")
 
 ```
 
-Figurer fungerer på vanlig vis. Figurtekst lages hvis `fig_caption: yes` er angitt i Yaml-avsnittet. Figurteksten legges til som i eksemplet nedenfor. Hvis man angir `\\label{}` i figurteksten kan man også referere til figuren. Figur \ref{fig-barplot} viser et eksempel på bruk av NINAs logofarger via funksjonen `NinaR::NinaPalette`.  
+Figurer fungerer på vanlig vis. Figurtekst lages hvis `fig_caption: yes` er angitt i Yaml-avsnittet. Figurteksten legges til som i eksemplet nedenfor. Hvis man angir `\\label{}` i figurteksten kan man også referere til figuren. Figur @fig-barplot viser et eksempel på bruk av NINAs logofarger via funksjonen `NinaR::NinaPalette`.  
 
 
 
@@ -214,7 +241,7 @@ Hvis man trenger flere muligheter for definisjon av størrelse og plassering på
 
 
 ```{r}
-#| label: logo_stor
+#| label: fig-logo_stor
 #| echo: false
 #| out-width: '10cm'
 #| out-height: '5cm'
@@ -224,7 +251,7 @@ knitr::include_graphics("logo.eps",)
 ```
 
 
-Vi kan også referere til bilder, for eksempel til figur \ref{logoen}, som er inkludert i mallen. Notere at man må ha to `\\` for figurer laget i R men en `\` for  "eksterne" bilder. Man kan referere til seksjoner ved å angi en referanse i headingen `{#seksjon}`. For eksempel refererer jeg nå til innledningen i kapittel \ref{inl}.
+Vi kan også referere til bilder, for eksempel til figur @fig-logo_stor, som er inkludert i mallen. Notere at man må ha to `\\` for figurer laget i R men en `\` for  "eksterne" bilder. Man kan referere til seksjoner ved å angi en referanse i headingen `{#seksjon}`. For eksempel refererer jeg nå til innledningen i @sec-inl.
 
 
 \clearpage
