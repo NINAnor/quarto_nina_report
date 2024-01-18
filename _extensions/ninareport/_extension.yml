@@ -8,8 +8,11 @@ contributes:
       date-format: full
     pdf:
       documentclass: article
-      template: "partials/template.tex"
+      template: pdf_template/template.tex
       cite-method: citeproc
       number-sections: true
     html:
-      theme: styles/ninareport.scss
+      theme: html_template/ninareport.scss
+    docx:
+      reference_doc: docx_template/nina_report_quarto.docx
+      
