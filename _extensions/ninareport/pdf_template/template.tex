@@ -84,7 +84,7 @@ $endif$
             pdfsubject={$subtitle$},
             pdfkeywords={
               $for(keywords)$
-              $keywords.word$,~
+              $keywords$,~
               $endfor$
             }]{hyperref}
 
@@ -475,12 +475,12 @@ $customer_contact$ \par \smallspace
 $cover_picture_text$~ \copyright~ $cover_picture_photographer$ \par \smallspace
 {\scriptsize{NØKKELORD}} \par\smallskip
 $for(keywords)$
-\small{\hyp{} $keywords.word$} \par
+\small{\hyp{} $keywords$} \par
 $endfor$
 \vspace{5mm}
 {\scriptsize{KEY WORDS}} \par\smallskip
 $for(englishkeywords)$
-\small{\hyp{} $englishkeywords.word$} \par
+\small{\hyp{} $englishkeywords$} \par
 $endfor$
 
 \vfill
