@@ -41,22 +41,27 @@ englishkeywords:
   - two
 bibliography: bibliography.bib
 format:
-  ninareport-pdf:
-    keep-tex: true
-    highlight: tango
-    fig_caption: yes
-    latex_engine: xelatex
-    default-image-extension: svg
-    fig-format: pdf
-  # ninareport-html:
-  #   highlight-style: tango
-  #   toc: true
-  #   toc-depth: 3
-  #   toc-location: left
-  #   default-image-extension: svg
-  #   fig-format: svg
-  # ninareport-docx:
+  # ninareport-pdf:
+  #   keep-tex: true
   #   highlight: tango
+  #   fig_caption: yes
+  #   latex_engine: xelatex
+  #   default-image-extension: svg
+  #   fig-format: pdf
+  ninareport-html:
+    highlight-style: tango
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    toc-location: left
+    default-image-extension: svg
+    fig-format: svg
+   # ninareport-docx:
+   #   highlight: tango
+   #   toc: true
+   #   toc-depth: 3
+   #   number-sections: true
+  
 crossref:
   fig-title: Figur     # (default is "Figure")
   tbl-title: Tabell     # (default is "Table") 
@@ -101,7 +106,7 @@ Dette er en Quarto-malle for NINA Rapporter, en viderutvikling av Rmarkdown-mall
 Skrivemåten ved å produsere en NINA-rapport fra et skript brukes med fordel da rapporten har et stort innslag av kode, eller da man ønsker å lage en reproduserbar rapport. Bortsett fra seksjonene med kod er mallen tenkt å etterligne NINA sin standardmalle for rapporter. For å samarbeide med kolleger som ikke er kjent med Git eller kod generelt, kan man for eksempel bruke `trackdown`. Med den pakken kan hovedforfatteren dele en oppdatert tekst-versjon av dokumentet på google drive, der medforfattere kan redigere teksten. Deretter kan endringene i teksten synkes ned til Quarto-dokumentet. Se mer på https://cran.r-project.org/web/packages/trackdown/vignettes/trackdown-workflow.html
 
 
-## Fremgangsmåte
+# Fremgangsmåte
 
 *Dette kreves for å bruke malen:*
 * Rstudio (hvis du skal bruke R)
@@ -124,20 +129,24 @@ Bruk bare én output om gangen, ved å kommentere ut de du ikke bruker i YAML-av
 Referanser kan inkluderes på to måter. Vi kan for eksempel referere til @Pedersen2016 i teksten, eller så her [@Pedersen2016]. Stilen for referansene er avhengig at man klasser dem som rett type, for eksempel som artikel [@article].
 
 
-### Test sub sub heading
+## Test sub sub heading
 For å lage en "pagebreak", for eksempel mellom ulike kapittel, skriv `\newpage`. `\clearpage` fungerer på lignende måte, men da tvinger man frem en plassering av alle bilder til nå, og da kan de ofte havne på en egen side. Prøv deg frem.
 
-### En til sub sub heading
+## En til sub sub heading
 Denne male er fortsatt ikke perfekt, men har blitt brukt for et prosjekt til Miljødirektoratet og godkjent av biblioteket. Spørsmål og synspunkter kan sendes til Jens Åström. 
 
 Det kan gå kjappere å skrive rapporter i dette format, men det gjenstår ofte noen småfiks med formateringer på slutten. Plassering av bilder kan til hvis grad styres gjennom å endre på størrelsen til dem (f.eks. out.width eller fig.width), eller gjennom å overstyre plasseringen (f.eks. fig.pos = "!hb"). Men alt er ikke mulig å styre helt så foreløpig må man akseptere noen plasseringer. 
 
-\paragraph{Prøver meg på en sub sub sub heading}
-Obs at 4-nivåseksjoner må skrives med `\paragraph{titell}`!
+
+### En sub sub sub heding
+Dette er det laveste nivået på headers man bør bruke.
+
+#### En 4-nivå header
+Dette brukes egentlig ikke i NINA-mallen.
 
 
-## Ekvasjoner
-Ekvasjoner kan skrives met LaTeX-kod.
+# Ekvasjoner
+Ekvasjoner kan skrives med LaTeX-kod.
 
 $$\tilde f(\omega)=\frac{1}{2\pi}
 \int_{-\infty}^\infty f(x)e^{-i\omega x}\,dx\,,$$
@@ -147,8 +156,8 @@ $$\tilde f(\omega)=\frac{1}{2\pi}
 
 
 
-Resultater {#res}
-========
+# Resultater {#res}
+
 R-kod kan legges til på vanlig vis. Fargemønstret kan endres gjennom `highlight: xxx` Yaml-avsnittet i starten på dokumentet.
 
 ```{r}
@@ -186,7 +195,7 @@ for num in range(lower, upper + 1):
 ```
 
 
-Tabeller fra R kan lages gjennom pakken `xtable`. Her er et eksempel på output fra en enkel modell. Man kan også referere til en tabell, for eksempel referer jeg nå til @tbl-table1.
+Tabeller fra R kan lages gjennom pakken `xtable`, `kable` eller `DT::datatable`, avhengig output-format. Her er et eksempel på en tabell med modellestimat fra en enkel modell. Vi quarto-variabler for å skifte mellom tabellformat, avhengig hvilken output-format vi renderer. Dette trengs ikke hvis man kun skal lage et format. Man kan også referere til en tabell, for eksempel referer jeg nå til @tbl-table1.
 
 ```{r}
 #| label: tbl-table1
@@ -196,13 +205,32 @@ Tabeller fra R kan lages gjennom pakken `xtable`. Her er et eksempel på output 
 
 mod1<-glm(y~x)
 
-#Bruk dette for pdf-output
-  print(xtable(round(summary(mod1)$coefficients, 3), 
-               caption="Tabell laget med xtable."))
+to_table <- round(summary(mod1)$coefficients, 3)
 
-#Bruk dette for html- og docx-output
-# knitr::kable(round(summary(mod1)$coefficients, 3),
-#              caption="Tabell laget med xtable.")
+if(names(rmarkdown::metadata$format) == "ninareport-pdf"){
+  
+ xtable(to_table,
+        caption="Tabell laget med xtable.")
+  
+} else if(names(rmarkdown::metadata$format) == "ninareport-html"){
+  
+  DT::datatable(to_table, 
+                caption="Tabell laget med xtable.",
+                style = "bootstrap",
+                options = list(
+                  pageLength = 10,
+                  autoWidth = TRUE,
+                  columnDefs = list(list(width = "100px",
+                                         targets = 1))
+                )
+                )
+} else {
+  
+    knitr::kable(to_table,
+          caption="Tabell laget med xtable.")
+  
+  }
+
 
 ```
 
@@ -268,8 +296,8 @@ Vi kan også referere til bilder, for eksempel til @fig-logo_stor, som er inklud
 
 \clearpage
 
-Referanser {#references}
-==========
+# Referanser {#references}
+
 \setlength{\parindent}{-0.2in}
 \setlength{\parskip}{8pt}
 \noindent
