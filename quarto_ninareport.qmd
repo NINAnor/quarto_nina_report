@@ -40,28 +40,30 @@ englishkeywords:
   - one
   - two
 bibliography: bibliography.bib
+csl: nina.csl
 format:
   # ninareport-pdf:
   #   keep-tex: true
   #   highlight: tango
   #   fig_caption: yes
   #   latex_engine: xelatex
-  #   default-image-extension: svg
+  #  # default-image-extension: svg
   #   fig-format: pdf
+  #   fig-dpi: 600
   ninareport-html:
     highlight-style: tango
     toc: true
     toc-depth: 3
     number-sections: true
     toc-location: left
-    default-image-extension: svg
+    #default-image-extension: svg
     fig-format: svg
-   # ninareport-docx:
-   #   highlight: tango
-   #   toc: true
-   #   toc-depth: 3
-   #   number-sections: true
-  
+  # ninareport-docx:
+  #   highlight: tango
+  #   #prefer-html: true
+  #   toc: true
+  #   toc-depth: 3
+  #   number-sections: true
 crossref:
   fig-title: Figur     # (default is "Figure")
   tbl-title: Tabell     # (default is "Table") 
