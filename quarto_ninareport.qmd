@@ -58,6 +58,7 @@ format:
     toc-location: left
     #default-image-extension: svg
     fig-format: svg
+    toc-title: Innhold
   # ninareport-docx:
   #   highlight: tango
   #   #prefer-html: true
