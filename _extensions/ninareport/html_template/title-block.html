@@ -1,0 +1,63 @@
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+$if(title)$
+<h1 class="title">$title$</h1>
+$endif$
+$if(subtitle)$
+<p class="subtitle lead">$subtitle$</p>
+$endif$
+
+$for(first_author)$
+  $first_author.name$
+$endfor$
+$if(second_authors)$
+$for(second_authors)$
+  , $second_authors.name$
+$endfor$
+$endif$
+$if(last_author)$
+$for(last_author)$
+  , $last_author.name$
+$endfor$
+$endif$
+
+$if(cover_picture)$
+<br>
+<img src=$cover_picture$ alt=$cover_picture_text$ width="460" height="345">
+$endif$
+<br>
+<div class="abstract-title">Siteres som:</div>
+$self-ref$ NINA Rapport $reportnr$. Norsk institutt for naturforskning.
+<br>
+<br>
+Kvalitetsgranskere: $qualitycontrol$
+<br>
+Ansvarlig signatur: $boss_sign$
+<br>
+$if(sammendrag)$
+<div class="abstract">
+<div class="abstract-title">Sammendrag</div>
+$sammendrag$
+</div>
+$endif$
+
+$if(abstract)$
+<div class="abstract">
+<div class="abstract-title">$abstract-title$</div>
+$abstract$
+</div>
+$endif$
+
+
+$if(hide-description)$
+$elseif(description)$
+<div>
+  <div class="description">
+    $description$
+  </div>
+</div>
+$endif$
+
+<!-- $title-metadata.html()$ -->
+
+</header>
