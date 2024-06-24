@@ -11,7 +11,7 @@ This template requires a working installation of XelaTeX. This is installed at l
 quarto use template NINAnor/quarto_nina_report
 ```
 
-This creates a subfolder in the folder you are standing in (in the terminal), with a file called 'quarto_ninatemplate.qmd'. Create a copy of this file with a name that reflects the name of the report. Render this through the "render" button in Rstudio. It may be a good idea to keep the original qmd-document as well as a another minimal example, which you use to test out new features with shorter rendering times.
+This creates a subfolder in the folder you are standing in (in the terminal), with a file called 'quarto_ninatemplate.qmd'. Create a copy of this file with a name that reflects the name of the report. Render this through the `Render` button in Rstudio. It may be a good idea to keep the original qmd-document as well as a another minimal example, which you use to test out new features with shorter rendering times.
 
 Please see https://quarto.org/docs/get-started/hello/rstudio.html for a general tutorial on how to use this. Specific tips are found in the template itself.
 
