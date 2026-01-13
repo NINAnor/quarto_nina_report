@@ -41,24 +41,25 @@ englishkeywords:
   - two
 bibliography: bibliography.bib
 csl: nina.csl
+lang: nb
 format:
-  # ninareport-pdf:
-  #   keep-tex: true
-  #   highlight: tango
-  #   fig_caption: yes
-  #   latex_engine: xelatex
-  #  # default-image-extension: svg
-  #   fig-format: pdf
-  #   fig-dpi: 600
-  ninareport-html:
-    highlight-style: tango
-    toc: true
-    toc-depth: 3
-    number-sections: true
-    toc-location: left
-    #default-image-extension: svg
-    fig-format: svg
-    toc-title: Innhold
+  ninareport-pdf:
+    keep-tex: true
+    highlight: tango
+    fig_caption: yes
+    latex_engine: xelatex
+    # default-image-extension: svg
+    fig-format: pdf
+    fig-dpi: 600
+ # ninareport-html:
+ #   highlight-style: tango
+ #   toc: true
+ #   toc-depth: 3
+ #   number-sections: true
+ #   toc-location: left
+ #   #default-image-extension: svg
+ #   fig-format: svg
+ #   toc-title: Innhold
   # ninareport-docx:
   #   highlight: tango
   #   #prefer-html: true
@@ -97,31 +98,63 @@ require(ggplot2)
 opts_chunk$set(tidy=T, 
                tidy.opts=list(width.cutoff=50),
                fig.align = "left")
-options(width = 60,
-        "xtable.comment" = F,
-        "xtable.include.rownames" = F)
+options(width = 60
+        )
+
+#Custom function to produce table that looks OK on all 3 output formats
+nina_table <- function(df, cap = NULL, ...) {
+  if (knitr::is_latex_output()) {
+    return(print(xtable::xtable(df, caption = cap, ...), 
+                 floating = FALSE, 
+                 comment = FALSE, 
+                 include.rownames = FALSE,
+                 type = "latex"))
+  } 
+  
+  if (knitr::is_html_output()) {
+    return(DT::datatable(df, caption = cap, 
+                         style = "bootstrap", 
+                         options = list(autoWidth = TRUE)))
+  }
+  
+  return(knitr::kable(df, caption = cap))
+}
+
 
 ```
 
 # Innledning {#sec-inl}
 Dette er en Quarto-malle for NINA Rapporter, en viderutvikling av Rmarkdown-mallen fra `NinaR` [@NinaR]. Den er fremst tenkt for å brukes i statistikkprogrammet R, for eksempel via https://rstudio.nina.no. Quarto vil etterhvert erstatte Rmarkdown i Rstudio, og har fordelen ved å fungere ikke bare for R, uten også for andre språk, for eksempel python.
 
-Skrivemåten ved å produsere en NINA-rapport fra et skript brukes med fordel da rapporten har et stort innslag av kode, eller da man ønsker å lage en reproduserbar rapport. Bortsett fra seksjonene med kod er mallen tenkt å etterligne NINA sin standardmalle for rapporter. For å samarbeide med kolleger som ikke er kjent med Git eller kod generelt, kan man for eksempel bruke `trackdown`. Med den pakken kan hovedforfatteren dele en oppdatert tekst-versjon av dokumentet på google drive, der medforfattere kan redigere teksten. Deretter kan endringene i teksten synkes ned til Quarto-dokumentet. Se mer på https://cran.r-project.org/web/packages/trackdown/vignettes/trackdown-workflow.html
+Skrivemåten ved å produsere en NINA-rapport fra et skript brukes med fordel da rapporten har et stort innslag av kode, eller da man ønsker å lage en reproduserbar rapport. Bortsett fra seksjonene med kod er mallen tenkt å etterligne NINA sin standardmalle for rapporter. Det er helt klart enklest å skrive alt i Rstudio, og samarbeide for eksempel i Git. Men for å samarbeide med kolleger som ikke er kjent med Git eller kod generelt, kan man for eksempel bruke `trackdown`. Med den pakken kan hovedforfatteren dele en oppdatert tekst-versjon av dokumentet på google drive, der medforfattere kan redigere teksten. Deretter kan endringene i teksten synkes ned til Quarto-dokumentet. Se mer på https://cran.r-project.org/web/packages/trackdown/vignettes/trackdown-workflow.html
 
 
-# Fremgangsmåte
+# Installasjon
 
 *Dette kreves for å bruke malen:*
-* Rstudio (hvis du skal bruke R)
+
+* R, hvis du skal bruke R (denne male er testet i Rstudio)
+* Quarto (egen installasjon eller bruk den som er inkludert i Rstudio)
 * En Tex-installasjon (hvis du bruker pdf-output)
     - For Windows, se http://miktex.org/
     - For Mac, se http://tug.org/mactex/
-    - For Linux, installere tex-live
+    - For Linux, installere \LaTeX, f.eks. TinyTex eller Texlive 
 * NinaR, for å enklere bruke f.eks. NINA-farger (se http://www.github.com/NINAnor/NinaR)    
     
-Den enkleste måten er å bruke rstudio-servene http://rstudio.nina.no, der alt er (bør være) installert.
+Den enkleste måten er å bruke rstudio-servene https://rstudio.nina.no eller https://rstudio-geo.nina.no. Rstudio.nina.no har allerede texlive installert, og i skrivende stund fungerer malen der. Dette til tross kan det være lurt å bruke en nyere lettviktsinstallasjon av tex, TinyTex, som Quarto er anpasset for å bruke, og som en vanlig bruker kan installere. `tinytex::install_tinytex()`.
 
-Bruk mallen f.eks. i rstudio.nina.no ved å skrive dette i terminalvinduet: `quarto use template NINAnor/quarto_nina_report`. Det vil da lages en undermappe med filene du vil jobbe med. For øyeblikket er ikke quarto-templater tilgjengelig via Rstudio sine menyer, men dette vil truligvis forbedres i fremtiden.
+Hvis du vil bruke den seneste versionen av Quarto kan den lastes ned her: https://quarto.org/docs/download/ I Linux, pakke da opp tarballen og legg den et sted i din hjemmefolder. Hvis du har installert en egen versjon av Tex og/eller Quarto, kan du tilsi at Rstudio plukke opp disse, gjennom å legge f.eks. dette i din Renviron-fil (~/.Renviron):
+
+`
+QUARTO_PATH="$USER/quarto/1.8.26/bin/quarto"
+QUARTO_TINYTEX="$USER/.TinyTex"
+`
+
+Med dette gjort burde også malen fungere på en fersk installasjon av Rstudio (eller R) på andre linux-maskiner.
+
+## Fremgangsmåte
+
+Bruk mallen f.eks. i rstudio.nina.no ved å skrive dette i terminalvinduet: `quarto use template NINAnor/quarto_nina_report`. Det vil da lages en undermappe med filene du vil jobbe med. 
 
 Høyst oppe i malen (vises ikke i PDFen) finns en såkalt "YAML-seksjon" der diverse obligatoriske ting skal skrives inn. En lukket PDF kan lages gjennom å skrive "yes" etter secure_pdf. Radnummer til review produseres gjennom `line_numbering: yes`. Selv-referansen på side 3 skrives manuelt inn i ved `self-ref:` i YAML-avsnittet.
 
@@ -198,42 +231,21 @@ for num in range(lower, upper + 1):
 ```
 
 
-Tabeller fra R kan lages gjennom pakken `xtable`, `kable` eller `DT::datatable`, avhengig output-format. Her er et eksempel på en tabell med modellestimat fra en enkel modell. Vi quarto-variabler for å skifte mellom tabellformat, avhengig hvilken output-format vi renderer. Dette trengs ikke hvis man kun skal lage et format. Man kan også referere til en tabell, for eksempel referer jeg nå til @tbl-table1.
+Tabeller fra R kan lages gjennom pakken `xtable`, `kable` eller `DT::datatable`, avhengig output-format. Her er et eksempel på en tabell med modellestimat fra en enkel modell. Vi kan bruke quarto-variabler for å skifte mellom tabellformat, avhengig hvilken output-format vi renderer. Dette trengs ikke hvis man kun skal lage et format. Man kan også referere til en tabell, for eksempel referer jeg nå til @tbl-table1.
 
 ```{r}
 #| label: tbl-table1
 #| results: asis
 #| message: false
+#| echo: false
+#| fig-pos: 'ht'
 #| tbl-cap: Eksempeltabell
 
-mod1<-glm(y~x)
+mod1 <- glm(y~x)
 
 to_table <- round(summary(mod1)$coefficients, 3)
 
-if(names(rmarkdown::metadata$format) == "ninareport-pdf"){
-  
- xtable(to_table,
-        caption="Tabell laget med xtable.")
-  
-} else if(names(rmarkdown::metadata$format) == "ninareport-html"){
-  
-  DT::datatable(to_table, 
-                caption="Tabell laget med xtable.",
-                style = "bootstrap",
-                options = list(
-                  pageLength = 10,
-                  autoWidth = TRUE,
-                  columnDefs = list(list(width = "100px",
-                                         targets = 1))
-                )
-                )
-} else {
-  
-    knitr::kable(to_table,
-          caption="Tabell laget med xtable.")
-  
-  }
-
+nina_table(to_table)
 
 ```
 

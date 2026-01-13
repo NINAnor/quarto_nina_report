@@ -27,15 +27,23 @@ $endif$
 %  {\par}
 %$endif$
 
-%To fix CLSreferenses bug
-%This will probably have to be updated when using later rmarkdown and or pandoc versions
+% New fix for rstudio-rgeo and quarto
+\newcommand{\citeproctext}{}
 $if(csl-refs)$
 \newlength{\cslhangindent}
-\setlength{\cslhangindent}{3.2em}
-\newenvironment{CSLReferences}[2]{
-\setlength{\parindent}{0pt}%
-  \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces%
-  \par}
+\setlength{\cslhangindent}{1.5em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {% Use a list to wrap the environment, but handle items manually
+  \begin{list}{}{
+    \setlength{\leftmargin}{\ifnum #1=1 \cslhangindent \else 0pt \fi}
+    \setlength{\itemindent}{\ifnum #1=1 -\cslhangindent \else 0pt \fi}
+    \setlength{\parsep}{0pt}
+    \setlength{\itemsep}{#2\baselineskip}
+  }
+  % Redefine bibitem to just be a simple item with no label
+  \renewcommand{\bibitem}[2][]{\item[]}
+ }
+ {\end{list}}
 $endif$
 
 
