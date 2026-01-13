@@ -113,12 +113,34 @@ $endif$
 %Note that we need to suppress ligaturs to mimic standard windows behaviour with Calibri
 \usepackage{fontspec}
 \defaultfontfeatures{Ligatures={NoRequired, NoCommon, NoContextual}}
-\setmainfont{Calibri}
-\newfontfamily{\narrow}{Calibri}
-\newfontfamily{\narrowbold}{Calibri Bold}
-\newfontfamily{\arialnarrow}{Arial Narrow}
-\newfontfamily{\arialnarrowbold}{Arial Narrow Bold}
+% \setmainfont{Calibri}
+% \newfontfamily{\narrow}{Calibri}
+% \newfontfamily{\narrowbold}{Calibri Bold}
+% \newfontfamily{\arialnarrow}{Arial Narrow}
+% \newfontfamily{\arialnarrowbold}{Arial Narrow Bold}
 %\restoresymbol{fontspec}{medspace}
+
+% Use bundled fonts
+\newcommand{\fontpath}{_extensions/ninareport/fonts/}
+\setmainfont{calibri.ttf}[
+    Path = \fontpath,
+    BoldFont = calibrib.ttf,
+    ItalicFont = calibrii.ttf,
+    BoldItalicFont = calibriz.ttf
+]
+
+\newfontfamily{\narrow}{calibri.ttf}[Path = \fontpath]
+\newfontfamily{\narrowbold}{calibrib.ttf}[Path = \fontpath]
+
+\newfontfamily{\arialnarrow}{ARIALN.TTF}[
+    Path = \fontpath,
+    BoldFont = ARIALNB.TTF,
+    ItalicFont = ARIALNI.TTF,
+    BoldItalicFont = ARIALNBI.TTF
+]
+
+%% To keep your previous 'arialnarrowbold' alias working
+\newcommand{\arialnarrowbold}{\arialnarrow\bfseries}
 
 
 %To insert manual hyphens
