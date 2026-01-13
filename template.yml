@@ -1,0 +1,11 @@
+name: nina-report
+author: "NINA"
+version: 1.0.0
+quarto-version: ">=1.3.0"
+
+
+contents:
+  - name: index.qmd
+    from: quarto_ninareport.qmd
+  - name: bibliography.bib
+    from: bibliography.bib  
