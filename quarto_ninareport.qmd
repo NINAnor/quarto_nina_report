@@ -24,7 +24,7 @@ english-self-ref: the Poo, W., Robin, C. 2016. A very good title.
 handle-endpoint: [fås av bibliotek]
 access: Åpen
 secure_pdf:
-cover_picture: coverPicture.png
+cover_picture: figures/coverPicture.png
 cover_picture_text: Forsidebildetekst
 cover_picture_photographer: Fotografnavn
 line_numbering:
@@ -101,6 +101,9 @@ opts_chunk$set(tidy=T,
 options(width = 60
         )
 
+#Can be good to set at "clean" master ggplot theme. In the future there might be a theme_nina().
+theme_set(ggthemes::theme_few())
+
 #Custom function to produce table that looks OK on all 3 output formats
 nina_table <- function(df, cap = NULL, ...) {
   if (knitr::is_latex_output()) {
@@ -124,6 +127,9 @@ nina_table <- function(df, cap = NULL, ...) {
 ```
 
 # Innledning {#sec-inl}
+
+*quarto_nina_report V2.0 *
+
 Dette er en Quarto-malle for NINA Rapporter, en viderutvikling av Rmarkdown-mallen fra `NinaR` [@NinaR]. Den er fremst tenkt for å brukes i statistikkprogrammet R, for eksempel via https://rstudio.nina.no. Quarto vil etterhvert erstatte Rmarkdown i Rstudio, og har fordelen ved å fungere ikke bare for R, uten også for andre språk, for eksempel python.
 
 Skrivemåten ved å produsere en NINA-rapport fra et skript brukes med fordel da rapporten har et stort innslag av kode, eller da man ønsker å lage en reproduserbar rapport. Bortsett fra seksjonene med kod er mallen tenkt å etterligne NINA sin standardmalle for rapporter. Det er helt klart enklest å skrive alt i Rstudio, og samarbeide for eksempel i Git. Men for å samarbeide med kolleger som ikke er kjent med Git eller kod generelt, kan man for eksempel bruke `trackdown`. Med den pakken kan hovedforfatteren dele en oppdatert tekst-versjon av dokumentet på google drive, der medforfattere kan redigere teksten. Deretter kan endringene i teksten synkes ned til Quarto-dokumentet. Se mer på https://cran.r-project.org/web/packages/trackdown/vignettes/trackdown-workflow.html
@@ -133,17 +139,17 @@ Skrivemåten ved å produsere en NINA-rapport fra et skript brukes med fordel da
 
 *Dette kreves for å bruke malen:*
 
-* R, hvis du skal bruke R (denne male er testet i Rstudio)
+* R, mest sannsynligvis (denne male er testet i Rstudio)
 * Quarto (egen installasjon eller bruk den som er inkludert i Rstudio)
 * En Tex-installasjon (hvis du bruker pdf-output)
     - For Windows, se http://miktex.org/
     - For Mac, se http://tug.org/mactex/
     - For Linux, installere \LaTeX, f.eks. TinyTex eller Texlive 
-* NinaR, for å enklere bruke f.eks. NINA-farger (se http://www.github.com/NINAnor/NinaR)    
+* NinaR anbefales, for å enklere bruke f.eks. NINA-farger (se http://www.github.com/NINAnor/NinaR)    
     
-Den enkleste måten er å bruke rstudio-servene https://rstudio.nina.no eller https://rstudio-geo.nina.no. Rstudio.nina.no har allerede texlive installert, og i skrivende stund fungerer malen der. Dette til tross kan det være lurt å bruke en nyere lettviktsinstallasjon av tex, TinyTex, som Quarto er anpasset for å bruke, og som en vanlig bruker kan installere. `tinytex::install_tinytex()`.
+Den enkleste måten er å bruke rstudio-servene https://rstudio.nina.no eller https://rstudio-geo.nina.no. Rstudio.nina.no har allerede Texlive installert, og i skrivende stund fungerer malen der. Dette til tross kan det være lurt å bruke en nyere lettviktsinstallasjon av tex, TinyTex, som Quarto er anpasset til å bruke, og som en vanlig bruker kan installere. `tinytex::install_tinytex()`. Dette installerer TinyTex i hjemmekatalogen din i den sjulte foldern ~/.TinyTex.
 
-Hvis du vil bruke den seneste versionen av Quarto kan den lastes ned her: https://quarto.org/docs/download/ I Linux, pakke da opp tarballen og legg den et sted i din hjemmefolder. Hvis du har installert en egen versjon av Tex og/eller Quarto, kan du tilsi at Rstudio plukke opp disse, gjennom å legge f.eks. dette i din Renviron-fil (~/.Renviron):
+Hvis du vil bruke den seneste versionen av Quarto kan den lastes ned her: https://quarto.org/docs/download/. I Linux, pakke da opp tarballen og legg den et sted i din hjemmefolder. Hvis du har installert en egen versjon av Tex og/eller Quarto, kan du sikkerstille at Rstudio plukke opp disse gjennom å legge f.eks. dette i din Renviron-fil (~/.Renviron):
 
 `
 QUARTO_PATH="$USER/quarto/1.8.26/bin/quarto"
@@ -182,10 +188,10 @@ Dette brukes egentlig ikke i NINA-mallen.
 
 
 # Ekvasjoner
-Ekvasjoner kan skrives med LaTeX-kod.
+Ekvasjoner kan skrives med LaTeX-kod, og refereres til, f.eks. @eq-integral.
 
 $$\tilde f(\omega)=\frac{1}{2\pi}
-\int_{-\infty}^\infty f(x)e^{-i\omega x}\,dx\,,$$
+\int_{-\infty}^\infty f(x)e^{-i\omega x}\,dx\,,$$ {#eq-integral}
 
 
 \newpage
@@ -290,9 +296,11 @@ ggplot(plot.mat) +
 
 Eksisterende bilder kan også legges til gjennom vanlig markdown syntax. Disse blir sentrerte. Noter at eps-filer angis uten filendelse.
 
-![Nina-logoen, som eksempel på inkludering av et bilde. \label{logoen}](logo.png){width=400 height=200}
+![Nina-logoen, som eksempel på inkludering av et bilde. \label{logoen}](figures/logo.png){width=400 height=200}
 
 Hvis man trenger flere muligheter for definisjon av størrelse og plassering på en ferdig bilde, kan man også inkludere den med "include_graphics".
+
+
 
 
 ```{r}
@@ -302,17 +310,12 @@ Hvis man trenger flere muligheter for definisjon av størrelse og plassering på
 #| out-height: '5cm'
 #| fig-cap: 'NINA-logoen via (knitr::include_graphics) med spesifisert format.'
 
-knitr::include_graphics("logo.png",)
+knitr::include_graphics("figures/logo.png",)
 ```
 
-
-Vi kan også referere til bilder, for eksempel til @fig-logo_stor, som er inkludert i mallen.  Man kan referere til seksjoner ved å angi en referanse i headingen `{#seksjon}`. For eksempel refererer jeg nå til innledningen i @sec-inl.
-
+Vi kan også referere til bilder, for eksempel til @fig-logo_stor, som er inkludert i malen.  Man kan referere til seksjoner ved å angi en referanse i headingen `{#seksjon}`. For eksempel refererer jeg nå til innledningen i @sec-inl.
 
 \clearpage
 
 # Referanser {#references}
 
-\setlength{\parindent}{-0.2in}
-\setlength{\parskip}{8pt}
-\noindent

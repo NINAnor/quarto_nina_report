@@ -10,15 +10,6 @@ contributes:
       documentclass: article
       template: pdf_template/template.tex
       number-sections: true
-      format-resources:
-        - fonts/ARIALN.TTF
-        - fonts/ARIALNB.TTF
-        - fonts/ARIALNI.TTF
-        - fonts/ARIALNBI.TTF
-        - fonts/calibri.ttf
-        - fonts/calibrib.ttf
-        - fonts/calibrii.ttf
-        - fonts/calibriz.ttf
     html:
       theme: html_template/ninareport.scss
       template-partials:
