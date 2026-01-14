@@ -17,7 +17,7 @@ $endif$
 \newcommand{\brotatefig}{\begin{sidewaysfigure}}
 \newcommand{\erotatefig}{\end{sidewaysfigure}}
 
-
+%Original
 %$if(csl-refs)$
 %\newlength{\cslhangindent}
 %\setlength{\cslhangindent}{1.5em}
@@ -27,15 +27,23 @@ $endif$
 %  {\par}
 %$endif$
 
-%To fix CLSreferenses bug
-%This will probably have to be updated when using later rmarkdown and or pandoc versions
+% New fix for rstudio-rgeo and quarto
+\newcommand{\citeproctext}{}
 $if(csl-refs)$
 \newlength{\cslhangindent}
-\setlength{\cslhangindent}{3.2em}
-\newenvironment{CSLReferences}[2]{
-\setlength{\parindent}{0pt}%
-  \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces%
-  \par}
+\setlength{\cslhangindent}{1.5em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {% Use a list to wrap the environment, but handle items manually
+  \begin{list}{}{
+    \setlength{\leftmargin}{\ifnum #1=1 \cslhangindent \else 0pt \fi}
+    \setlength{\itemindent}{\ifnum #1=1 -\cslhangindent \else 0pt \fi}
+    \setlength{\parsep}{0pt}
+    \setlength{\itemsep}{#2\baselineskip}
+  }
+  % Redefine bibitem to just be a simple item with no label
+  \renewcommand{\bibitem}[2][]{\item[]}
+ }
+ {\end{list}}
 $endif$
 
 
@@ -52,7 +60,6 @@ $endif$
 
 %Force floats to appear after text
 %\usepackage{flafter}
-
 
 
 %For linenumbers
@@ -105,13 +112,50 @@ $endif$
 %Note that we need to suppress ligaturs to mimic standard windows behaviour with Calibri
 \usepackage{fontspec}
 \defaultfontfeatures{Ligatures={NoRequired, NoCommon, NoContextual}}
-\setmainfont{Calibri}
-\newfontfamily{\narrow}{Calibri}
-\newfontfamily{\narrowbold}{Calibri Bold}
-\newfontfamily{\arialnarrow}{Arial Narrow}
-\newfontfamily{\arialnarrowbold}{Arial Narrow Bold}
+%Old way, using system installed fonts.
+% \setmainfont{Calibri}
+% \newfontfamily{\narrow}{Calibri}
+% \newfontfamily{\narrowbold}{Calibri Bold}
+% \newfontfamily{\arialnarrow}{Arial Narrow}
+% \newfontfamily{\arialnarrowbold}{Arial Narrow Bold}
 %\restoresymbol{fontspec}{medspace}
 
+% Use bundled fonts
+\newcommand{\fontpath}{_extensions/ninareport/fonts/}
+\setmainfont{calibri.ttf}[
+    Path = \fontpath,
+    BoldFont = calibrib.ttf,
+    ItalicFont = calibrii.ttf,
+    BoldItalicFont = calibriz.ttf
+]
+
+%% 2. The "Narrow" Family (Using Calibri files)
+\newfontfamily{\narrow}{calibri.ttf}[
+    Path = \fontpath,
+    BoldFont = calibrib.ttf,
+    ItalicFont = calibrii.ttf,
+    BoldItalicFont = calibriz.ttf
+]
+% Alias for your old code
+\newcommand{\narrowbold}{\narrow\bfseries}
+
+%% 3. Arial Narrow
+% This family is for the "NINA" part (Natural Width)
+\newfontfamily{\arialnarrow}{ARIALN.TTF}[
+    Path = \fontpath,
+    BoldFont = ARIALNB.TTF,
+    ItalicFont = ARIALNI.TTF,
+    BoldItalicFont = ARIALNBI.TTF
+]
+
+% This family is specifically for the "Rapport" part (Squeezed/Thin)
+\newfontfamily{\arialthin}{ARIALN.TTF}[
+    Path = \fontpath,
+    FakeStretch = 0.9 % Adjust this (0.8 to 0.9) until it matches your old look
+]
+
+% Alias for the bold part
+\newcommand{\arialnarrowbold}{\arialnarrow\bfseries}
 
 %To insert manual hyphens
 \usepackage{hyphenat}
@@ -204,142 +248,173 @@ $endif$
 %Defines the line in the pagefooter
 \newcommand*\ruleline[1]{\par\noindent\raisebox{.4ex}{\makebox[\linewidth]{\hrulefill\hspace{1ex}\raisebox{-.4ex}{#1}\hspace{1ex}\hrulefill}}}
 
-%Define titlepage footer
-\usepackage{tikzpagenodes}
-\fancypagestyle{titlefooter}{% Define title footer (change to svg logo)
+% %Define titlepage footer
+% Old version
+% \usepackage{tikzpagenodes}
+% \fancypagestyle{titlefooter}{% Define title footer (change to svg logo)
+%   \fancyhf{}
+%   \begin{center}
+%   \vspace{-1.2cm}
+%   \Large\shadOrange{\narrow{\textbf{www.nina.no}}}
+%   \vspace{.2cm}
+%   \end{center}
+%   \begin{tikzpicture}[remember picture,overlay]
+%     \node (a) at (-4,-1.68) {};
+%     \node (b) at (0.37,-8.12) {};
+%     \coordinate[above=2.5cm of b,xshift=-.6cm]  (legend);
+%     \coordinate[below=.49cm of a,xshift=3.3cm]  (rapportnr);
+%     \fill[footgrey] (a) rectangle (b);
+%     \node[rotate=90] at (legend) {\color{darkgrey}\Huge{\arialnarrowbold{NINA~}\arialthin{Rapport}}};
+%     \node at (rapportnr) {\color{orange}\Huge{\narrowbold{$reportnr$}}};
+%  \end{tikzpicture}
+% \lfoot{\vspace{1.25cm}\hspace{-1.45cm}\includegraphics[height=1.6cm]{_extensions/ninareport/logo.eps}}
+% \rfoot{\vspace{2.4cm}\Large\color{darkgrey}{\arialnarrow{Norsk institutt for naturforskning~~~}}}
+% \begin{tikzpicture}[remember picture,overlay]
+%   \fill[footgrey]
+%     (current page.south west)
+%     rectangle
+%   (current page.east|-current page footer area.south east);
+%   \end{tikzpicture}
+% }
+
+\fancypagestyle{titlefooter}{%
   \fancyhf{}
-  \begin{center}
-  \vspace{-1.2cm}
-  \Large\shadOrange{\narrow{\textbf{www.nina.no}}}
-  \vspace{.2cm}
-  \end{center}
-  \begin{tikzpicture}[remember picture,overlay]
-    \node (a) at (-4,-1.68) {};
-    \node (b) at (0.37,-8.12) {};
-    \coordinate[above=2.5cm of b,xshift=-.6cm]  (legend);
-    \coordinate[below=.49cm of a,xshift=3.3cm]  (rapportnr);
-    \fill[footgrey] (a) rectangle (b);
-    \node[rotate=90] at (legend) {\color{darkgrey}\Huge{\arialnarrowbold{NINA~}\arialnarrow{Rapport}}};
-    \node at (rapportnr) {\color{orange}\Huge{\narrowbold{$reportnr$}}};
- \end{tikzpicture}
-\lfoot{\vspace{1.25cm}\hspace{-1.45cm}\includegraphics[height=1.6cm]{logo.eps}}
-\rfoot{\vspace{2.4cm}\Large\color{darkgrey}{\arialnarrow{Norsk institutt for naturforskning~~~}}}
-\begin{tikzpicture}[remember picture,overlay]
-  \fill[footgrey]
-    (current page.south west)
-    rectangle
-  (current page.east|-current page footer area.south east);
-  \end{tikzpicture}
-}
-
- \usepackage{tikzpagenodes}
-
-
-% one way of including bg-pic
-% \usepackage{eso-pic}
-% \newcommand\BackgroundPic{%
-% \put(0,0){%
-% \parbox[b][\paperheight]{\paperwidth}{%
-% \vfill
-% \centering
-% \includegraphics[width=\paperwidth,height=\paperheight,%
-% keepaspectratio]{title_page_bg.png}%
-% \vfill
-% }}}
-
-%Define endpage footer
-\fancypagestyle{endfooter}{% Define endpage footer (change to svg logo)
-
-  \fancyhf{}
-  \fancyfootoffset[R]{0cm}
   \begin{center}
     \vspace{-1.2cm}
     \Large\shadOrange{\narrow{\textbf{www.nina.no}}}
-
- \begin{tikzpicture}[remember picture,overlay]
- \node (a) at (11.05, 4.3) {};
- \node (b) at (15,-2.1) {};
- \coordinate[above=2.5cm of b,xshift=-3cm]  (legend);
- \coordinate[below=.5cm of a,xshift=1cm]  (rapportnr);
- \fill[footgrey] (a) rectangle (b);
- \node[rotate=90] at (legend) {\color{darkgrey}\Huge{\arialnarrowbold{NINA~}\arialnarrow{Rapport}}};
- \node at (rapportnr) {\color{orange}\huge{\narrowbold{$reportnr$}}};
-\end{tikzpicture}
-    \begin{minipage}{0.386\linewidth}
-    {\begin{flushleft}\color{darkgrey}\vspace{1.2cm}\large\narrow\em{\textbf{Norsk institutt for naturforskning, NINA,} er en uavhengig stiftelse som forsker på natur og samspillet natursammfunn.
-
-    \bigskip
-    NINA ble etablert i 1988. Hovedkontoret er i Trondheim, med avdelingskontorer i Tromsø, Lillehammer, Bergen og Oslo. I tillegg driver NINA Sæterfjellet avlsstasjon for fjellrev på Oppdal, og forskningsstasjonen for vill laksefisk på Ims i Rogaland.
-
-    \bigskip
-    NINAs virksomhet omfatter både forskning og utredning, miljøoveråking, rådgivning og evaluering. NINA har stor bredde i kompetanse og erfaring med både naturvitere og samfunnsvitere i staben. Vi har kunnskap om artene, naturtypene, sammfunnets bruk av naturen og sammenhenger med de store drivkreftene i naturen.} \end{flushleft}}
-    \end{minipage}
-    \vspace{3cm}
-    \vfill{}{\normalsize{ISSN: 1504-3312 \\
-  ISBN: 978-82-426-$ISBN_end$}}
   \end{center}
-  \lfoot{\color{darkgrey}\vspace{0.5cm}\Large\narrow{\textbf{Norsk institutt for naturforskning}}\\
-\begingroup
-\narrow
-\normalsize NINA Hovedkontor\\
-Postadresse: Postboks 5685 Torgarden, 7485 Trondheim\\
-Besøks-/leveringsadresse: Høgskoleringen 9, 7034 Trondheim\\
-Telefon: 73 80 14 00, Telefaks: 73 80 14 01\\
-E-post: firmapost@nina.no\\
-Organisasjonsnummer 9500 37 687\\
-http://www.nina.no
-\endgroup}
-  % \rfoot{\vspace{2cm}\hspace{-3cm}\includegraphics[height=1.6cm]{logo.eps}\\
-  % \Large\darkGrey{\narrow{Samarbeid og kunnskap for framtidas miljøløsninger}}
-  % }
-  \rfoot{\vspace{2.3cm}\savebox{\myheadbox}{\Large\darkGrey{\narrow{Samarbeid og kunnskap for framtidas miljøløsninger}}}\makebox[\wd\myheadbox][c]{\includegraphics[height=1.6cm]{logo.eps}}\\\usebox{\myheadbox}}
 
-    \begin{tikzpicture}[remember picture,overlay]
-  \fill[footgrey]
-    (current page.south west)
-    %(current page.west|-current page footer area.north west)
-    rectangle
-  (current page.east|-current page footer area.north east);
-  %(current page text area.south west);
+  \begin{tikzpicture}[remember picture,overlay]
+    % 1. SIDEBAR & BACKGROUND
+    \node (a) at (-4,-1.88) {};
+    \node (b) at (0.37,-8.32) {};
+    \fill[footgrey] (a) rectangle (b);
+    
+    \fill[footgrey]
+      (current page.south west)
+      rectangle
+      (current page.east|-current page footer area.south east);
+
+    % 2. SIDEBAR TEXT (Logo & Report Number)
+    \coordinate[above=2.5cm of b,xshift=-.6cm] (legend);
+    \node[rotate=90] at (legend) {\color{darkgrey}\Huge{\arialnarrowbold{NINA~}\arialthin{Rapport}}};
+    
+    \coordinate[below=.49cm of a,xshift=3.3cm] (rapportnr);
+    \node at (rapportnr) {\color{orange}\Huge{\narrowbold{$reportnr$}}};
+
+    % 3. LOGO PLACEMENT (Adjust 'yshift' to move up/down)
+    % (current page.south west) is the anchor. 
+    % xshift=2cm moves it right, yshift=1cm moves it up.
+    \node[anchor=south west, xshift=1.9cm, yshift=1.9cm] at (current page.south west) {
+        \includegraphics[height=1.5cm]{_extensions/ninareport/logo.eps}
+    };
+
+    % 4. COMPANY NAME PLACEMENT (Adjust 'yshift' to move up/down)
+    % (current page.south east) is the anchor.
+    \node[anchor=south east, xshift=-1.65cm, yshift=1.75cm] at (current page.south east) {
+        \Large\color{darkgrey}{\arialnarrow{Norsk institutt for naturforskning}}
+    };
   \end{tikzpicture}
-
-%  \tikz[remember picture,overlay] {%
-%  \draw [blue,line width=2mm]
-%  (current page.south west)
-%  rectangle
-%  (current page.north east)
-%  ;
-%  \draw [green]
-%  (current page text area.south west)
-%  rectangle
-%  (current page text area.north east)
-%  ;
-%  \draw [yellow]
-%  (current page marginpar area.south west)
-%  rectangle
-%  (current page marginpar area.north east)
-%  ;
-%  \draw [red]
-%  (current page header area.south west)
-%  rectangle
-%  (current page header area.north east)
-%  ;
-%  \draw [orange]
-%  (current page footer area.south west)
-% rectangle
-%  (current page footer area.north east)
-%  ;
-%  }%
-
 }
+
+
+\usepackage{tikzpagenodes}
+
+
+
+% Define endpage footer
+\fancypagestyle{endfooter}{%
+  \fancyhf{}
+  \fancyfootoffset[R]{0cm}
+
+  % 1. SIDEBAR (Moved outside the center environment to ensure it renders)
+\begin{tikzpicture}[remember picture,overlay]
+    % Reference the bottom-right corner of the page
+    \begin{scope}[shift={(current page.south east)}]
+      
+      % 'a' is Top-Left of the box (Moved 6cm left of edge, 15cm up from bottom)
+      \node (a) at (-3.0, 25.2) {}; 
+      
+      % 'b' is Bottom-Right of the box (0,0 is the corner)
+      % We set it slightly off-page (0.1) to ensure no white gaps at the edge
+      \node (b) at (0.1, 18.9) {}; 
+      
+      \fill[footgrey] (a) rectangle (b);
+
+      % The text nodes relative to 'b' (the bottom-right area)
+      \coordinate[above=2.45cm of b, xshift=-2.2cm] (legend);
+      \coordinate[below=.45cm of a, xshift=0.9cm] (rapportnr);
+      
+      \node[rotate=90] at (legend) {\color{darkgrey}\Huge{\arialnarrowbold{NINA~}\arialthin{Rapport}}};
+      \node at (rapportnr) {\color{orange}\huge{\narrowbold{$reportnr$}}};
+      
+    \end{scope}
+\end{tikzpicture}
+  
+  % 2. CENTERED CONTENT (URL, About NINA, and ISBN)
+  \begin{center}
+    \vspace{-2.3cm}
+    \Large\shadOrange{\narrow{\textbf{www.nina.no}}}
+
+    \vspace{2.1cm} % Space before the About NINA text
+    \begin{minipage}{0.355\linewidth}
+      \color{darkgrey}\large\narrow\itshape
+      \textbf{Norsk institutt for naturforskning, NINA,} er en uavhengig stiftelse som forsker på natur og samspillet natursammfunn.
+      \bigskip\par
+      NINA ble etablert i 1988. Hovedkontoret er i Trondheim, med avdelingskontorer i Tromsø, Lillehammer, Bergen og Oslo. I tillegg driver NINA Sæterfjellet avlsstasjon for fjellrev på Oppdal, og forskningsstasjonen for vill laksefisk på Ims i Rogaland.
+      \bigskip\par
+      NINAs virksomhet omfatter både forskning og utredning, miljøoveråking, rådgivning og evaluering. NINA har stor bredde i kompetanse og erfaring med både naturvitere og samfunnsvitere i staben. Vi har kunnskap om artene, naturtypene, sammfunnets bruk av naturen og sammenhenger med de store drivkreftene i naturen.
+    \end{minipage}
+
+    \vfill
+    
+    {\normalsize ISSN: 1504-3312 \\ [-8pt] 
+    ISBN: 978-82-426-$ISBN_end$}
+  \end{center}
+
+
+  % 4. BOTTOM BAR & LOGO/SLOGAN (Using TikZ for perfect placement)
+  \begin{tikzpicture}[remember picture,overlay]
+    % Grey Bottom Bar
+    \fill[footgrey]
+      (current page.south west)
+      rectangle
+      (current page.east|-current page footer area.north east);
+      
+      
+    % 2. CONTACT INFO (Replaces \lfoot)
+    % Increase yshift to move the whole block UP, xshift to move it RIGHT
+    \node[anchor=south west, xshift=1.85cm, yshift=1.9cm] at (current page.south west) {
+      \color{darkgrey}\arialnarrow
+      \renewcommand{\arraystretch}{1} % Tightens the rows
+      \begin{tabular}{@{}l@{}}
+        {\Large\textbf{Norsk institutt for naturforskning}} \\[3pt]
+        \normalsize NINA Hovedkontor \\
+        \normalsize Postadresse: Postboks 5685 Torgarden, 7485 Trondheim \\
+        \normalsize Besøks-/leveringsadresse: Høgskoleringen 9, 7034 Trondheim \\
+        \normalsize Telefon: 73 80 14 00 \\
+        \normalsize E-post: firmapost@nina.no \\
+        \normalsize Organisasjonsnummer 9500 37 687 \\
+        \normalsize http://www.nina.no
+      \end{tabular}
+    };  
+
+    % Logo (Adjust yshift if it needs to go lower)
+    \node[anchor=south east, xshift=-4.8cm, yshift=2.8cm] at (current page.south east) {
+        \includegraphics[height=1.6cm]{_extensions/ninareport/logo.eps}
+    };
+
+    % Slogan (Adjust yshift to move lower/higher than logo)
+    \node[anchor=south east, xshift=-1.4cm, yshift=1.9cm] at (current page.south east) {
+        \Large\color{darkgrey}{\arialthin{Samarbeid og kunnskap for framtidas miljøløsninger}}
+    };
+  \end{tikzpicture}
+}
+
 
 %Make sure it always produce even numbered document (adding empty page if necessary)
 \usepackage{scrextend}
-\newcommand{\OpenNewPageIfNeeded}{%
-  \Ifthispageodd{\fancyhf{}\newgeometry{bottom=6.6cm, top=2cm, left=1.5cm, right=1.5cm, headsep=0cm, footskip=0.5cm}\null\clearpage~\pagestyle{endfooter}
-  }{\fancyhf{}\newgeometry{bottom=6.6cm, top=2cm, left=1.5cm, right=1.5cm, headsep=0cm, footskip=0.5cm}\null\pagestyle{endfooter}}
-}
-\AtEndDocument{\OpenNewPageIfNeeded}
+%This is now handled at the end of the template.
 
 
 $if(highlighting-macros)$
@@ -364,6 +439,8 @@ $endif$
 \newcommand{\lightGrey}[1]{\textcolor{ashgrey}{#1}}
 \newcommand{\darkGrey}[1]{\textcolor{darkgrey}{#1}}
 
+%#####################END PREAMBLE - BEGIN DOCUMENT###############
+
 \begin{document}
 %\AddToShipoutPicture*{\BackgroundPic}
 
@@ -373,11 +450,6 @@ $endif$
 %Testing out title page bg-pic
 \thispagestyle{titlefooter}
 
-%Testing out tikz title page bg-pic
-% \begin{tikzpicture}[remember picture,overlay, anchor=south west]
-%   \node at (current page.south west){\includegraphics[width=\paperwidth,height=\paperheight,%
-%  keepaspectratio]{title_page_bg.png}};
-% \end{tikzpicture}
 
 \huge{$title$} \par\vspace{.3cm}
 \LARGE{$subtitle$} \par\vspace{.6cm}
@@ -600,9 +672,23 @@ $foreword.name$
 $body$
 
 
-%\clearpage
-%\fancyhf{}
-%\newgeometry{a4paper, bottom=8cm, top=2cm, left=1.5cm, right=1.5cm}
-%\pagestyle{endfooter}
+
+% 1. Clear the page after references
+\clearpage 
+
+% 2. Force the endfooter geometry for the final page(s)
+\newgeometry{bottom=6.6cm, top=2cm, left=1.5cm, right=1.5cm, headsep=0cm, footskip=0.5cm}
+
+% 3. Check for even/odd and apply the endpage
+\Ifthispageodd{%
+    % It's an odd page, so the "End Page" will be page 1 (Odd). 
+    % We want it on an even page? Or just to finish?
+    % If you want a blank page THEN the endfooter:
+    \fancyhf{} \null \clearpage 
+    \pagestyle{endfooter} \null
+}{%
+    % It's an even page, so we just apply the style to the current new page
+    \pagestyle{endfooter} \null
+}
 
 \end{document}

@@ -20,4 +20,12 @@ This creates a subfolder in the folder you are standing in (in the terminal), wi
 
 Please see https://quarto.org/docs/get-started/hello/rstudio.html for a general tutorial on how to use this. Specific tips are found in the template itself.
 
+## Changelog
+### V2.0
+Embeds custom fonts and babel-norsk. This makes it work on a linux machine without prior Texlive installation and no superuser rights.
+
+### V1.x
+Changes not tracked
+
+
 
