@@ -29,7 +29,7 @@ QUARTO_PATH="~/quarto/quarto-1.8.26/bin/quarto"
 QUARTO_TINYTEX="~/.TinyTex"
 `
 
-To make sure quarto is discoverale by the system, add this last in ~/.bashrc:
+To make sure quarto is discoverable by the system, add this last in ~/.bashrc:
 
 `
 PATH="$USER/quarto/quarto-1.8.26/bin:$PATH"
