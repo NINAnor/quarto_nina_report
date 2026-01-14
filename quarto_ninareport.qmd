@@ -149,14 +149,22 @@ Skrivemåten ved å produsere en NINA-rapport fra et skript brukes med fordel da
     
 Den enkleste måten er å bruke rstudio-servene https://rstudio.nina.no eller https://rstudio-geo.nina.no. Rstudio.nina.no har allerede Texlive installert, og i skrivende stund fungerer malen der. Dette til tross kan det være lurt å bruke en nyere lettviktsinstallasjon av tex, TinyTex, som Quarto er anpasset til å bruke, og som en vanlig bruker kan installere. `tinytex::install_tinytex()`. Dette installerer TinyTex i hjemmekatalogen din i den sjulte foldern ~/.TinyTex.
 
-Hvis du vil bruke den seneste versionen av Quarto kan den lastes ned her: https://quarto.org/docs/download/. I Linux, pakke da opp tarballen og legg den et sted i din hjemmefolder. Hvis du har installert en egen versjon av Tex og/eller Quarto, kan du sikkerstille at Rstudio plukke opp disse gjennom å legge f.eks. dette i din Renviron-fil (~/.Renviron):
+Hvis du vil bruke den seneste versionen av Quarto kan den lastes ned her: https://quarto.org/docs/download/. I Linux, pakke da opp tarballen og legg den et sted i din hjemmefolder (f.eks. ~/quarto). Hvis du har installert en egen versjon av Tex og/eller Quarto, kan du sikkerstille at Rstudio plukke opp disse gjennom å legge f.eks. dette i din Renviron-fil (~/.Renviron):
 
 `
-QUARTO_PATH="$USER/quarto/1.8.26/bin/quarto"
-QUARTO_TINYTEX="$USER/.TinyTex"
+QUARTO_PATH="~/quarto/quarto-1.8.26/bin/quarto"
+`
+`
+QUARTO_TINYTEX="~/.TinyTex"
 `
 
-Med dette gjort burde også malen fungere på en fersk installasjon av Rstudio (eller R) på andre linux-maskiner.
+For å være sikker på å bruke den siste versjonen quarto kan du legge til f.eks. dette sist i ~/.bashrc:
+
+`
+PATH="$USER/quarto/quarto-1.8.26/bin:$PATH"
+`
+
+Med dette gjort burde også malen fungere på en fersk installasjon av Rstudio (eller R) på andre linux-maskiner (Testet på Fedora.)
 
 ## Fremgangsmåte
 
